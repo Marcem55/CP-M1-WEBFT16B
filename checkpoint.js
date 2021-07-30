@@ -171,10 +171,12 @@ LinkedList.prototype.switchPos = function (pos1, pos2) {
 // Continuando con el nodo 2 de la lista 2, conectandose con el nodo 2 de la lista 2.
 var mergeLinkedLists = function (linkedListOne, linkedListTwo) {
   // Tu código aca:
-  // Creo una lista
+  // Creo una lista nuevo para ir insertando los valores de las otras listas
   let list = new LinkedList();
+  //Guardo sus valores en una variable
   let current1 = linkedListOne.head;
   let current2 = linkedListTwo.head;
+  // Mientras que haya current, iterar el while que va agregando cada elemento de cada lista y va moviendo el current a current.next
   while (current1 || current2) {
     list.add(current1.value);
     list.add(current2.value);
@@ -351,6 +353,7 @@ var binarySearch = function (array, target) {
 
 var specialSort = function (array, orderFunction) {
   // Tu código aca:
+  // Aplico bubbleSort con la diferencia de la recursividad de orderFunction().
   let cambio = true;
   while (cambio) {
     cambio = false;
@@ -397,10 +400,12 @@ var specialSort = function (array, orderFunction) {
 
 function closureDetect(symptoms, min) {
   // Tu código aca:
+  //Se llama a la funcion que toma a las personas como parametro.
   return function (persona) {
+      //Inicializo el contador de sintomas
     let sintomas = 0;
     for (let i = 0; i < symptoms.length; i++) {
-      if (symptoms.includes(persona.symptoms[i])) {
+      if (symptoms.includes(persona.symptoms[i])) { //Pregunto por los sintomas de cada persona.
         sintomas++;
       }
     }
