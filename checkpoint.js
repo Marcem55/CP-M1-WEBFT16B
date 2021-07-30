@@ -37,9 +37,24 @@ const {
 //  - Caso que devuelve false --> isAncestor(genealogyTree, "Jacqueline Bouvier", "Abigail Simpson")
 //  [Observar los tests para otros casos]
 
-var isAncestor = function(genealogyTree, ancestor, descendant){
+var isAncestor = function (genealogyTree, ancestor, descendant) {
   // Tu código aca:
-
+  // Si el ancestro no tiene elementos, osea, descendientes:
+  if (genealogyTree[ancestor].length <= 0) {
+    return false;
+  }
+  // Si tiene elementos, recorrer y comparar si es el descendiente
+  for (let i = 0; i < genealogyTree[ancestor].length; i++) {
+    let nuevoAncestor = genealogyTree[ancestor][i];
+    if (nuevoAncestor === descendant) {
+      return true;
+    }
+    // Si no es, guardar ese descendiente en una nueva variable para ver si de descendiente tiene el descendiente original llamando de nuevo a la funcion.
+    if (genealogyTree[nuevoAncestor].length > 0) {
+      return isAncestor(genealogyTree, nuevoAncestor, descendant);
+    }
+  }
+  return false;
 }
 
 
@@ -77,6 +92,14 @@ var isAncestor = function(genealogyTree, ancestor, descendant){
 
 function secuenciaHenry(obj, n) {
   // Tu código aca:
+  let valorDeN = n;
+  if (valorDeN < 0) { // Si son negativos tiene que retornar null.
+    return null;
+  } else if (valorDeN === 0) { // Si es 0, tiene que retornar el valor de la propiedad first del objeto.
+    return obj.first;
+  } else if (valorDeN === 1) { // Si es 1, tiene que retornar cuantas propiedades tiene el objeto.
+    return Object.keys(obj).length // El .length va porque ese metodo mete las propiedades en un array.
+  }
 
 }
 
@@ -96,9 +119,22 @@ function secuenciaHenry(obj, n) {
 //    lista.add(3);
 //    lista.size(); --> 3
 
-LinkedList.prototype.size = function(){
+LinkedList.prototype.size = function () {
   // Tu código aca:
-
+  let size = 0;
+  // Si Head es null, no tiene size
+  if (this.head === null) {
+    return 0;
+  } else {
+    let current = this.head;
+    // Si no es null, que recorra hasta que el next sea null y vaya agregando 1 al size.
+    while (current.next !== null) {
+      size++;
+      current = current.next;
+    }
+    //Le retorno size + 1 porque size solo no cuenta el head.
+    return size + 1;
+  }
 }
 
 
@@ -117,7 +153,7 @@ LinkedList.prototype.size = function(){
 // Ejemplo 2:
 //    Suponiendo que se pide una posición inválida: removeFromPos(8) --> false
 
-LinkedList.prototype.switchPos = function(pos1, pos2){
+LinkedList.prototype.switchPos = function (pos1, pos2) {
   // Tu código aca:
 
 }
@@ -133,7 +169,7 @@ LinkedList.prototype.switchPos = function(pos1, pos2){
 // Nota: las listas enlazadas mergeadas intercalandose.
 // El nodo 1 de la lista 1, se conecta con el nodo 1 de la lista 2.
 // Continuando con el nodo 2 de la lista 2, conectandose con el nodo 2 de la lista 2.
-var mergeLinkedLists = function(linkedListOne, linkedListTwo){
+var mergeLinkedLists = function (linkedListOne, linkedListTwo) {
   // Tu código aca:
 
 }
@@ -181,9 +217,42 @@ var mergeLinkedLists = function(linkedListOne, linkedListTwo){
 // finalizar el juego.
 
 
-var cardGame = function(playerOneCards, playerTwoCards){
+var cardGame = function (playerOneCards, playerTwoCards) {
   // Tu código aca:
-
+  // Declaro la resistencia de los castillos
+  let castillo1 = 100;
+  let castillo2 = 100;
+  // Que vaya sacando 2 cartas(cada carta es un objeto) de cada mazo de cada jugador y haga el ataque/defensa(son propiedades) como dice el enunciado.
+  do {
+    let cartaAtaquePlayer1 = playerOneCards.dequeue();
+    let cartaDefensaPlayer1 = playerOneCards.dequeue();
+    let cartaAtaquePlayer2 = playerTwoCards.dequeue();
+    let cartaDefensaPlayer2 = playerTwoCards.dequeue();
+    if (cartaAtaquePlayer1.attack > cartaDefensaPlayer2.defense) {
+      castillo2 -= (cartaAtaquePlayer1.attack - cartaDefensaPlayer2.defense);
+      //Si el valor de ataque de la carta1 del player1 es mayor a la defensa de la carta2 del player2, se le resta al castillo2 la diferencia que sobra.
+    }
+    if (cartaAtaquePlayer2.attack > cartaDefensaPlayer1.defense) {
+      castillo1 -= (cartaAtaquePlayer2.attack - cartaDefensaPlayer1.defense);
+      //Lo mismo pero al reves.
+    }
+    // Si en el proceso de ataque/defensa de las cartas, el castillo de alguno de los 2 jugadores queda en 0 o menos, pierde.
+    if (castillo1 <= 0) {
+      return 'PLAYER TWO';
+    }
+    if (castillo2 <= 0) {
+      return 'PLAYER ONE';
+    }
+    // Que todo esto se haga mientras haya cartas en el mazo, que se van a terminar al mismo tiempo ya que tienen la misma cantidad.
+  } while (playerOneCards.size() > 0);
+  // Si se termina el mazo y ningun castillo queda en 0, hay que ver cual quedo con menos cantidad de resistencia.
+  if (castillo1 > castillo2) { // Si el cast1 tiene mas resis, gana el Player One
+    return 'PLAYER ONE';
+  } else if (castillo2 > castillo1) { // Si el cast2 tiene mas resis, gana el Player Two
+    return 'PLAYER TWO';
+  } else {
+    return 'TIE'; // Si quedaron con la misma resis, es empate.
+  }
 }
 
 // ---------------
@@ -205,9 +274,21 @@ var cardGame = function(playerOneCards, playerTwoCards){
 // Este arbol tiene una altura de 4
 // PISTA: Una forma de resolverlo es pensarlo recursivamente y usando Math.max
 
-BinarySearchTree.prototype.height = function(){
+BinarySearchTree.prototype.height = function () {
   // Tu código aca:
-
+  if (this.value === null) {
+    return 0;
+  }
+  if(this.left === null && this.right === null){ // Retorna 1 por el nivel del head.
+    return 1;
+  }
+  if(this.left !== null & this.right === null){ // Retorna 1 por el nivel del head + misma funcion en los distintos niveles (si es que encuentra).
+    return 1 + this.left.height();
+  }
+  if(this.left === null && this.right !== null){
+    return 1 + this.right.height();
+  }
+  return 1 + Math.max(this.left.height(), this.right.height()); //Retorna el mayor de los 2 resultados de niveles de cada lado del arbol.
 }
 
 
@@ -229,8 +310,11 @@ BinarySearchTree.prototype.height = function(){
 
 var binarySearch = function (array, target) {
   // Tu código aca:
-
+  let indexTarget = array.indexOf(target); // Busco el index de target y lo retorno. No necesito una condicion que me retorne -1 porque si no lo encuentra retorna -1 por defecto.
+  return indexTarget;
+  // No pude realizar el metodo binario de busqueda binario, por eso lo dejo con el IndexOf/
 }
+
 
 // EJERCICIO 9
 // Ordená un arreglo de objetos usando un bubble sort pero con algunas particularidades.
@@ -255,10 +339,23 @@ var binarySearch = function (array, target) {
 //   {name: 'Leo', age: 40, height: 1.83}
 // ]
 
-var specialSort = function(array, orderFunction) {
+var specialSort = function (array, orderFunction) {
   // Tu código aca:
-
+  let cambio = true;
+  while (cambio) {
+    cambio = false;
+    for (let i = 0; i < array.length - 1; i++) {
+      if (orderFunction(array[i], array[i + 1]) === -1) {
+        let auxiliar = array[i];
+        array[i] = array[i + 1];
+        array[i + 1] = auxiliar;
+        cambio = true;
+      }
+    }
+  }
+  return array;
 }
+
 
 // ----- Closures -----
 
@@ -290,7 +387,17 @@ var specialSort = function(array, orderFunction) {
 
 function closureDetect(symptoms, min) {
   // Tu código aca:
-
+  return function (persona) {
+    let sintomas = 0;
+    for (let i = 0; i < symptoms.length; i++) {
+      if (symptoms.includes(persona.symptoms[i])) {
+        sintomas++;
+      }
+    }
+    return sintomas >= min 
+      ? true 
+      : false;
+  }
 }
 
 // -------------------
